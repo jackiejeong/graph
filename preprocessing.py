@@ -16,8 +16,8 @@ for year in pre['출원일']:
     years = year[0:4]
     yearlist.append(years)
 
-# 출원년도 컬럼 추가
-pre.insert(7,'출원년도',yearlist)
+# 출원연도 컬럼 추가
+pre.insert(7,'출원연도',yearlist)
 
 # NaN을 빈 칸으로 바꾸고 데이터 교체
 pre = pre.replace(np.nan, '', regex=True)
