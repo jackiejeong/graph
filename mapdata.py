@@ -18,6 +18,10 @@ agraph['누적건수'] = np.cumsum(agraph['출원건수'])
 abar = (Bar()
     .add_xaxis(list(agraph['출원연도']))
     .add_yaxis('출원건수', list(agraph['출원건수']))
+    # 레이블 삭제
+    #.set_series_opts(
+    #    label_opts=opts.LabelOpts(is_show=False)
+        
     # .add_yaxis('범례', 값)
     # .add_xaxis / .add_yaxis 추가함으로써 막대 추가 가능
     # .set_global_opts(title_opts=opts.TitleOpts(title='제목', subtitle='소제목))
@@ -27,13 +31,32 @@ abar = (Bar()
 # list_str = map(str, list_int) 사용
 aline = (Line()
     .add_xaxis(xaxis_data = map(str,agraph['출원연도']))
-    .add_yaxis("누적건수", y_axis = list(agraph['누적건수']))
+    # 레이블 삭제
+    .add_yaxis("누적건수", y_axis = list(agraph['누적건수']),label_opts=opts.LabelOpts(is_show=False))
     # .render("누적건수 그래프(line).html")
 )
 
 # Bar + Line
 abar.overlap(aline).render("전체 출원동향.html")
-
+# 보조축 생성 실패할 경우 레이블 
+# line 그래프 y축값이 매번 달라지므로, 최대값과 최소값을 추출하여야 함. 일단 overlap 코드 파악, 특히 밑
+#.set_global_opts(
+#        title_opts=opts.TitleOpts(title="Overlap-bar+line"),
+#        yaxis_opts=opts.AxisOpts(axislabel_opts=opts.LabelOpts(formatter="{value} ml")),
+#    )
+# 또는
+#.set_global_opts(
+#yaxis_opts=opts.AxisOpts(
+#            name="水量",
+#            type_="value",
+#            min_=0,
+#            max_=250,
+#            interval=50,
+#            axislabel_opts=opts.LabelOpts(formatter="{value} ml"),
+#            axistick_opts=opts.AxisTickOpts(is_show=True),
+#            splitline_opts=opts.SplitLineOpts(is_show=True)
+#        )
+#   )
 
 # 국가별 출원건수 - Pie그래프, 상위 4개 국가코드 및 출원건수
 bgraphcodea = ['KR', 'JP', 'US', 'EP']
@@ -91,25 +114,27 @@ for bcodea in bgraphcodea:
         #setattr(mod, 'data{}'.format(bcodeb), bpredatabyearc)
 
         #기본 Bar 그래프
-        basicxaxis = list(range(datetime.today().year - 20, datetime.today().year + 1))
-        basicbargraph = (Bar()
-                    .add_xaxis(basicxaxis)
-                    .set_global_opts(xaxis_opts=opts.AxisOpts(interval = 1))
-                    )
-        #Line 그래프
+        #basicxaxis = list(range(datetime.today().year - 20, datetime.today().year + 1))
+        #basicbargraph = (Bar()
+        #            .add_xaxis(basicxaxis)
+        #            .set_global_opts(xaxis_opts=opts.AxisOpts(interval = 1))
+        #            )
+        #Line 그래프 / 19개까지 연도 하나씩 다 보임 / 10개~15개 하면 안되는가?
+        #x_data = ['2002','2003','2004','2005','2006','2007','2008','2009','2010','2011','2012','2013','2014','2015','2016','2017','2018','2019','2020']
         bline = (Line()
                 .add_xaxis(xaxis_data = map(str, getattr(mod, 'data{}'.format(bpredataa['국가코드'][0]))['출원연도']))
-                 .add_yaxis('',y_axis = list(getattr(mod, 'data{}'.format(bpredataa['국가코드'][0]))['출원건수']))
-                 # .add_xaxis(xaxis_data = map(str, getattr(mod, 'data{}'.format(bpredataa['국가코드'][1]))['출원연도']))
-                 .add_yaxis('',y_axis = list(getattr(mod, 'data{}'.format(bpredataa['국가코드'][1]))['출원건수']))
-                 # .add_xaxis(xaxis_data = map(str, getattr(mod, 'data{}'.format(bpredataa['국가코드'][2]))['출원연도']))
-                 .add_yaxis('',y_axis = list(getattr(mod, 'data{}'.format(bpredataa['국가코드'][2]))['출원건수']))
-                 # .add_xaxis(xaxis_data = map(str, getattr(mod, 'data{}'.format(bpredataa['국가코드'][3]))['출원연도']))
-                 .add_yaxis('',y_axis = list(getattr(mod, 'data{}'.format(bpredataa['국가코드'][3]))['출원건수']))
-                # .add_xaxis(xaxis_data = map(str,bdataaa))
-                # .add_yaxis('',y_axis = list(bdataab))
-                # .add_xaxis(xaxis_data = map(str,('data{}'.format(bpredataa['국가코드'][0]))['출원연도']))
-                # .add_yaxis('', y_axis = list(('data{}'.format(bpredataa['국가코드'][0]))['출원건수']))
+                #.add_xaxis(xaxis_data = x_data)
+                .add_yaxis('',y_axis = list(getattr(mod, 'data{}'.format(bpredataa['국가코드'][0]))['출원건수']))
+                #.add_xaxis(xaxis_data = map(str, getattr(mod, 'data{}'.format(bpredataa['국가코드'][1]))['출원연도']))
+                .add_yaxis('',y_axis = list(getattr(mod, 'data{}'.format(bpredataa['국가코드'][1]))['출원건수']))
+                #.add_xaxis(xaxis_data = map(str, getattr(mod, 'data{}'.format(bpredataa['국가코드'][2]))['출원연도']))
+                .add_yaxis('',y_axis = list(getattr(mod, 'data{}'.format(bpredataa['국가코드'][2]))['출원건수']))
+                #.add_xaxis(xaxis_data = map(str, getattr(mod, 'data{}'.format(bpredataa['국가코드'][3]))['출원연도']))
+                .add_yaxis('',y_axis = list(getattr(mod, 'data{}'.format(bpredataa['국가코드'][3]))['출원건수']))
+                #.add_xaxis(xaxis_data = map(str,bdataaa))
+                #.add_yaxis('',y_axis = list(bdataab))
+                #.add_xaxis(xaxis_data = map(str,('data{}'.format(bpredataa['국가코드'][0]))['출원연도']))
+                #.add_yaxis('', y_axis = list(('data{}'.format(bpredataa['국가코드'][0]))['출원건수']))
                 )
 
             #bline.render('test.html')
