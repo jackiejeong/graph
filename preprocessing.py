@@ -1,5 +1,6 @@
 import pandas as pd
 import numpy as np
+from datetime import datetime
 
 pre = pd.read_excel('./excel.xlsx', header = 4)
 
@@ -7,7 +8,8 @@ pre = pre[['번호', '명칭', '요약', '출원인', '출원인주소', '출원
 '공개번호', '공개일', '등록번호', '등록일', '권리 현황', '최종 상태', '자국인용횟수', '자국피인용횟수', 'INPADOC패밀리수']]
 
 # 출원일 필터
-condition = (pre['출원일'] >= '2001')
+# condition = (pre['출원일'] >= '2001')
+condition = (pre['출원일'] >= datetime.today().year - 19)
 pre = pre[condition]
 
 # 출원년도 추출

@@ -1,5 +1,5 @@
 import pandas as pd
-import numpy as np
+import sys, numpy as np
 from datetime import datetime
 from pyecharts.charts import Bar, Line
 from pyecharts.charts import Pie
@@ -56,6 +56,18 @@ for bcodea in bgraphcodea:
 
         .render("{} 출원건수(상위 4개국) .html".format(bcodea))
     )
+
+    # 2002 ~ 2021
+    bpredatabyear = []
+    for year in range(20):
+        year = year + (datetime.today().year - 19)
+        bpredatabyear.append(year)
+        year = 0
+
+    # DataFrame 생성 시 칼럼 기초값
+    bpredatabyear = pd.DataFrame(data={'출원연도' : bpredatabyear})
+
+
     # 국가별 출원건수 - line그래프
     bgraphcodeb = list(bpredataa['국가코드'][0:])
     for bcodeb in bgraphcodeb:
@@ -66,23 +78,42 @@ for bcodea in bgraphcodea:
         bpredatab = bpredatab.reset_index()
         bpredatab.rename(columns={'index' : '출원연도', '출원연도' : '출원건수'}, inplace = True)
         bpredatab = bpredatab.sort_values(by='출원연도', ascending = True)
-        # 한국, 일본, 미국, 유럽 내 상위 출원 4개국에 대한 그래프 생성
-        # 그래프 합 필요
-        # 함수 이용?
 
-    # 각각 생성
-    bgraphcodeb = list(bpredataa['국가코드'][0:])
-    bcondtionb = (bgraphdata['국가코드'] == 'DE')
-    bpredatab = bgraphdata[bcondtionb]
-    bpredatab = bpredatab['출원연도'].value_counts()
-    bpredatab = bpredatab.reset_index()
-    bpredatab.rename(columns={'index' : '출원연도', '출원연도' : '출원건수'}, inplace = True)
-    bpredatab = bpredatab.sort_values(by='출원연도', ascending = True)
+        #bpredatabyeara = pd.merge(bpredatabyear, bpredatab, on='출원연도', how='left')
+        #bpredatabyearb = bpredatabyeara.replace(np.nan, 0, regex=True)
+        #bpredatabyearc = bpredatabyearb.astype({'출원건수' : np.int64})
+
+        mod = sys.modules[__name__]
+        setattr(mod, 'data{}'.format(bcodeb), bpredatab)
+
+        # 동적 변수 할당
+        #mod = sys.modules[__name__]
+        #setattr(mod, 'data{}'.format(bcodeb), bpredatabyearc)
+
+        #기본 Bar 그래프
+        basicxaxis = list(range(datetime.today().year - 20, datetime.today().year + 1))
+        basicbargraph = (Bar()
+                    .add_xaxis(basicxaxis)
+                    .set_global_opts(xaxis_opts=opts.AxisOpts(interval = 1))
+                    )
+        #Line 그래프
+        bline = (Line()
+                .add_xaxis(xaxis_data = map(str, getattr(mod, 'data{}'.format(bpredataa['국가코드'][0]))['출원연도']))
+                 .add_yaxis('',y_axis = list(getattr(mod, 'data{}'.format(bpredataa['국가코드'][0]))['출원건수']))
+                 # .add_xaxis(xaxis_data = map(str, getattr(mod, 'data{}'.format(bpredataa['국가코드'][1]))['출원연도']))
+                 .add_yaxis('',y_axis = list(getattr(mod, 'data{}'.format(bpredataa['국가코드'][1]))['출원건수']))
+                 # .add_xaxis(xaxis_data = map(str, getattr(mod, 'data{}'.format(bpredataa['국가코드'][2]))['출원연도']))
+                 .add_yaxis('',y_axis = list(getattr(mod, 'data{}'.format(bpredataa['국가코드'][2]))['출원건수']))
+                 # .add_xaxis(xaxis_data = map(str, getattr(mod, 'data{}'.format(bpredataa['국가코드'][3]))['출원연도']))
+                 .add_yaxis('',y_axis = list(getattr(mod, 'data{}'.format(bpredataa['국가코드'][3]))['출원건수']))
+                # .add_xaxis(xaxis_data = map(str,bdataaa))
+                # .add_yaxis('',y_axis = list(bdataab))
+                # .add_xaxis(xaxis_data = map(str,('data{}'.format(bpredataa['국가코드'][0]))['출원연도']))
+                # .add_yaxis('', y_axis = list(('data{}'.format(bpredataa['국가코드'][0]))['출원건수']))
+                )
+
+            #bline.render('test.html')
+            #basicbargraph.overlap(bline).render('test.html')
 
 
 
-
-    # line 그래프 기본 x축 생성
-    basicxaxis = list(range(datetime.today().year - 20, datetime.today().year + 1))
-    basicbargraph = (Bar()
-                        .add_xaxis(basicxaxis))
