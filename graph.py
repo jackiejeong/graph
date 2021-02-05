@@ -326,32 +326,49 @@ for country in 주요국:
     E주요국data = Rawdata[Econdition]
     E내외국인data = E주요국data['출원인국가코드']
     E내외국인data = E내외국인data.reset_index()
-    E내외국인data['출원인국가코드'] = np.where(E내외국인data['출원인국가코드'] == country, '{}'.format(country), '외국인')
-    E그래프data = E내외국인data['출원인국가코드'].value_counts()
-    E그래프data = E그래프data.reset_index()
-    E그래프data.columns = ['내외국인','출원건수']
-    setattr(mod, 'Epiedata{}'.format(country), E그래프data)
+    if country == 'EP':
+        EP국가 = ['GR', 'NL', 'DK', 'DE', 'LV', 'RO', 'LU', 'LT', 'BE', 'BG', 'CY', 'SE', 'ES', 'SK', 'SI', 'IE', 'EE', 'GB', 'AT', 'IT', 'CZ', 'PT', 'PL', 'FR', 'FI', 'HU']
+        for EP수정 in EP국가:    
+            E내외국인data['출원인국가코드'] = np.where(E내외국인data['출원인국가코드'] == EP수정, 'EP', '외국인') # 다 외국인으로 수정되는 문제 발생!
+        E그래프data = E내외국인data['출원인국가코드'].value_counts()
+        E그래프data = E그래프data.reset_index()
+        E그래프data.columns = ['내외국인','출원건수']
+        setattr(mod, 'EpiedataEP', E그래프data)
+    else:
+        E내외국인data['출원인국가코드'] = np.where(E내외국인data['출원인국가코드'] == country, '{}'.format(country), '외국인')
+        E그래프data = E내외국인data['출원인국가코드'].value_counts()
+        E그래프data = E그래프data.reset_index()
+        E그래프data.columns = ['내외국인','출원건수']
+        setattr(mod, 'Epiedata{}'.format(country), E그래프data)
 
 # 5-2, Pie 그래프
 Dpie = (Pie()
-        .add("",[list(z) for z in zip(getattr(mod, 'Epiedata{}'.format(주요국[0]))['내외국인'], getattr(mod, 'Epiedata{}'.format(주요국[0]))['출원건수'])]
-            ,center=["20%", "30%"]
-            #,radius=[60, 80])
-            ,radius = 30)
-        .add("",[list(z) for z in zip(getattr(mod, 'Epiedata{}'.format(주요국[1]))['내외국인'], getattr(mod, 'Epiedata{}'.format(주요국[1]))['출원건수'])]
-            ,center=["55%", "30%"]
-            #,radius=[60, 80])
-            ,radius = 30)
-        .add("",[list(z) for z in zip(getattr(mod, 'Epiedata{}'.format(주요국[2]))['내외국인'], getattr(mod, 'Epiedata{}'.format(주요국[2]))['출원건수'])]
-            ,center=["20%", "70%"]
-            #,radius=[60, 80])
-            ,radius = 30)
-        .add("",[list(z) for z in zip(getattr(mod, 'Epiedata{}'.format(주요국[3]))['내외국인'], getattr(mod, 'Epiedata{}'.format(주요국[3]))['출원건수'])] # EP에 해당하는 국가 찾아서 
-            ,center=["55%", "70%"]
-            #,radius=[60, 80])
-            ,radius = 30)
+        .add("한국",[list(z) for z in zip(getattr(mod, 'Epiedata{}'.format(주요국[0]))['내외국인'], getattr(mod, 'Epiedata{}'.format(주요국[0]))['출원건수'])]
+            ,center = ["30%", "45%"]
+            ,radius = '70'
+            )
+        .add("일본",[list(z) for z in zip(getattr(mod, 'Epiedata{}'.format(주요국[1]))['내외국인'], getattr(mod, 'Epiedata{}'.format(주요국[1]))['출원건수'])]
+            ,center = ["60%", "45%"]
+            ,radius = '70'
+            )
         # 범례 삭제
         .set_global_opts(legend_opts=opts.LegendOpts(is_show = False))
         .set_series_opts(label_opts=opts.LabelOpts(formatter="{b} : {d}%")) # 소수점 제거하던지 글씨크기를 줄이던지
        )
-Dpie.render('./주요국 내외국인 출원점유율.html')
+Dpie.render('./주요국 내외국인 출원점유율_1.html')
+
+# 5-3, Pie 그래프
+Dpie = (Pie()
+        .add("미국",[list(z) for z in zip(getattr(mod, 'Epiedata{}'.format(주요국[2]))['내외국인'], getattr(mod, 'Epiedata{}'.format(주요국[2]))['출원건수'])]
+            ,center = ["30%", "45%"]
+            ,radius = '70'
+            )
+        .add("유럽",[list(z) for z in zip(getattr(mod, 'Epiedata{}'.format(주요국[3]))['내외국인'], getattr(mod, 'Epiedata{}'.format(주요국[3]))['출원건수'])] # EP에 해당하는 국가 찾아서 
+            ,center = ["60%", "45%"]
+            ,radius = '70'
+            )
+        # 범례 삭제
+        .set_global_opts(legend_opts=opts.LegendOpts(is_show = False))
+        .set_series_opts(label_opts=opts.LabelOpts(formatter="{b} : {d}%")) # 소수점 제거하던지 글씨크기를 줄이던지
+       )
+Dpie.render('./주요국 내외국인 출원점유율_2.html')
