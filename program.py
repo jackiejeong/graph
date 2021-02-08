@@ -1,5 +1,6 @@
 import tkinter
 from tkinter import filedialog
+# from preprocessing import <def>
 
 창 = tkinter.Tk()
 창.title('정량분석')
@@ -8,13 +9,19 @@ from tkinter import filedialog
 
 def Load():
     filename = filedialog.askopenfilename(initialdir="/", title="Select file",
-                                          filetypes=(("Python files","*.py"),
+                                          filetypes=(("Excel files","*.xlsx"),
                                           ("all files", "*.*")))
     print(filename)
+    # 데이터 불러와서 어느 dataframe에 저장
+    # 전처리 버튼 누르면 전처리 py 실행
+    # 전처리 끝난거를 어느 dataframe에 저장
+    # 그 데이터로 그래프 생성
+    # 그걸 또 어딘가에 저장하고
+    # 저장 버튼 눌려서 어느 위치에 저장한다!
 
 def Save():
     filename = filedialog.asksaveasfilename(initialdir="/", title="Select file",
-                                          filetypes=(("Python files","*.py"),
+                                          filetypes=(("Excel files","*.xlsx"),
                                           ("all files", "*.*")))
     print(filename)
 
